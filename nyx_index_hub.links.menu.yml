@@ -1,0 +1,34 @@
+nyx.admin:
+  title: 'Nyx Services'
+  route_name: system.admin
+  parent: system.admin
+  description: 'Nyx AI Platform - Modules and Configurations'
+  weight: 5
+
+nyx_index_hub.admin:
+  title: 'Index Hub'
+  route_name: nyx_index_hub.admin
+  parent: nyx.admin
+  description: 'Manage groups, file storages and document indexing'
+  weight: 10
+
+entity.nyx_group.collection:
+  title: 'Groups'
+  route_name: entity.nyx_group.collection
+  parent: nyx_index_hub.admin
+  description: 'Groups list'
+  weight: 0
+
+entity.nyx_storage.collection:
+  title: 'File Storages'
+  route_name: entity.nyx_storage.collection
+  parent: nyx_index_hub.admin
+  description: 'File storages list'
+  weight: 1
+
+nyx_index_hub.orphan_list:
+  title: 'Orphan Stores'
+  route_name: nyx_index_hub.orphan_list
+  parent: nyx_index_hub.admin
+  description: 'Manage orphan stores from API'
+  weight: 2

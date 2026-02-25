@@ -1,0 +1,4 @@
+services:
+  nyx_index_hub.api_service:
+    class: Drupal\nyx_index_hub\Service\GeminiApiService
+    arguments: ['@http_client', '@config.factory', '@logger.factory']

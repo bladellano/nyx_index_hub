@@ -1,0 +1,182 @@
+<?php
+
+/**
+ * @file
+ * Install and update functions for Nyx Index Hub module.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function nyx_index_hub_schema() {
+  $schema = [];
+
+  // Table for Group.
+  $schema['nyx_group'] = [
+    'description' => 'Stores group information.',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Unique group ID.',
+      ],
+      'uuid' => [
+        'type' => 'varchar_ascii',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'Group UUID.',
+      ],
+      'name' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'Group name.',
+      ],
+      'username' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'Contact username.',
+      ],
+      'phone' => [
+        'type' => 'varchar',
+        'length' => 50,
+        'not null' => FALSE,
+        'description' => 'Phone number.',
+      ],
+      'email' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'description' => 'Email address.',
+      ],
+      'site' => [
+        'type' => 'varchar',
+        'length' => 2048,
+        'not null' => FALSE,
+        'description' => 'Group website URL.',
+      ],
+      'webhook' => [
+        'type' => 'varchar',
+        'length' => 2048,
+        'not null' => FALSE,
+        'description' => 'Webhook URL for notifications.',
+      ],
+      'group_key' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'Group key for authentication.',
+      ],
+      'created' => [
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Creation timestamp.',
+      ],
+      'changed' => [
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Last modification timestamp.',
+      ],
+    ],
+    'primary key' => ['id'],
+    'unique keys' => [
+      'uuid' => ['uuid'],
+    ],
+    'indexes' => [
+      'name' => ['name'],
+      'email' => ['email'],
+    ],
+  ];
+
+  // Table for File Storage.
+  $schema['nyx_storage'] = [
+    'description' => 'Stores file storage information.',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Unique file storage ID.',
+      ],
+      'uuid' => [
+        'type' => 'varchar_ascii',
+        'length' => 128,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'File storage UUID.',
+      ],
+      'name' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'File storage name.',
+      ],
+      'group_id' => [
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'Related group ID.',
+      ],
+      'description__value' => [
+        'type' => 'text',
+        'size' => 'big',
+        'not null' => FALSE,
+        'description' => 'File storage description.',
+      ],
+      'description__format' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'description' => 'Description text format.',
+      ],
+      'status' => [
+        'type' => 'int',
+        'size' => 'tiny',
+        'not null' => TRUE,
+        'default' => 1,
+        'description' => 'File storage status (1=active, 0=inactive).',
+      ],
+      'store_name' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+        'description' => 'API store name (fileSearchStores/xxx).',
+      ],
+      'created' => [
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Creation timestamp.',
+      ],
+      'changed' => [
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Last modification timestamp.',
+      ],
+    ],
+    'primary key' => ['id'],
+    'unique keys' => [
+      'uuid' => ['uuid'],
+    ],
+    'indexes' => [
+      'name' => ['name'],
+      'group_id' => ['group_id'],
+      'status' => ['status'],
+    ],
+    'foreign keys' => [
+      'group' => [
+        'table' => 'nyx_group',
+        'columns' => ['group_id' => 'id'],
+      ],
+    ],
+  ];
+
+  return $schema;
+}

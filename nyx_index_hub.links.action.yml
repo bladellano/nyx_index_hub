@@ -1,0 +1,11 @@
+entity.nyx_group.add_form:
+  route_name: entity.nyx_group.add_form
+  title: 'Add Group'
+  appears_on:
+    - entity.nyx_group.collection
+
+entity.nyx_storage.add_form:
+  route_name: entity.nyx_storage.add_form
+  title: 'Add File Storage'
+  appears_on:
+    - entity.nyx_storage.collection

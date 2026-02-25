@@ -1,0 +1,10 @@
+name: 'Nyx Index Hub'
+type: module
+description: 'Module to manage groups, projects and document indexing via Google Gemini File Search API.'
+core_version_requirement: ^10 || ^11
+package: 'Nyx'
+dependencies:
+  - drupal:file
+  - drupal:basic_auth
+  - drupal:link
+  - drupal:text

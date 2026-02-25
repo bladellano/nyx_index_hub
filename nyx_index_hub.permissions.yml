@@ -1,0 +1,20 @@
+administer nyx index hub:
+  title: 'Administer Nyx Index Hub'
+  description: 'Manage groups, file storages and module settings'
+  restrict access: true
+
+manage nyx groups:
+  title: 'Manage Groups'
+  description: 'Create, edit and delete groups'
+
+manage nyx storages:
+  title: 'Manage File Storages'
+  description: 'Create, edit and delete file storages'
+
+view nyx groups:
+  title: 'View Groups'
+  description: 'View groups list'
+
+view nyx storages:
+  title: 'View File Storages'
+  description: 'View file storages list'

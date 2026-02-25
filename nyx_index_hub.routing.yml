@@ -1,0 +1,166 @@
+entity.nyx_group.collection:
+  path: '/admin/nyx/groups'
+  defaults:
+    _entity_list: 'nyx_group'
+    _title: 'Groups'
+  requirements:
+    _permission: 'view nyx groups+manage nyx groups'
+
+entity.nyx_group.add_form:
+  path: '/admin/nyx/group/add'
+  defaults:
+    _entity_form: 'nyx_group.add'
+    _title: 'Add Group'
+  requirements:
+    _permission: 'manage nyx groups'
+
+entity.nyx_group.canonical:
+  path: '/admin/nyx/group/{nyx_group}'
+  defaults:
+    _entity_view: 'nyx_group.full'
+    _title_callback: '\Drupal\Core\Entity\Controller\EntityController::title'
+  requirements:
+    _permission: 'view nyx groups+manage nyx groups'
+
+entity.nyx_group.edit_form:
+  path: '/admin/nyx/group/{nyx_group}/edit'
+  defaults:
+    _entity_form: 'nyx_group.edit'
+    _title: 'Edit Group'
+  requirements:
+    _permission: 'manage nyx groups'
+
+entity.nyx_group.delete_form:
+  path: '/admin/nyx/group/{nyx_group}/delete'
+  defaults:
+    _entity_form: 'nyx_group.delete'
+    _title: 'Delete Group'
+  requirements:
+    _permission: 'manage nyx groups'
+
+entity.nyx_group.storages:
+  path: '/admin/nyx/group/{nyx_group}/storages'
+  defaults:
+    _form: '\Drupal\nyx_index_hub\Form\GroupStoragesForm'
+    _title: 'File Storages'
+  requirements:
+    _permission: 'view nyx storages+manage nyx storages'
+
+entity.nyx_storage.collection:
+  path: '/admin/nyx/storages'
+  defaults:
+    _entity_list: 'nyx_storage'
+    _title: 'File Storages'
+  requirements:
+    _permission: 'view nyx storages+manage nyx storages'
+
+entity.nyx_storage.add_form:
+  path: '/admin/nyx/storage/add'
+  defaults:
+    _entity_form: 'nyx_storage.add'
+    _title: 'Add File Storage'
+  requirements:
+    _permission: 'manage nyx storages'
+
+entity.nyx_storage.canonical:
+  path: '/admin/nyx/storage/{nyx_storage}'
+  defaults:
+    _entity_view: 'nyx_storage.full'
+    _title_callback: '\Drupal\Core\Entity\Controller\EntityController::title'
+  requirements:
+    _permission: 'view nyx storages+manage nyx storages'
+
+entity.nyx_storage.edit_form:
+  path: '/admin/nyx/storage/{nyx_storage}/edit'
+  defaults:
+    _entity_form: 'nyx_storage.edit'
+    _title: 'Edit File Storage'
+  requirements:
+    _permission: 'manage nyx storages'
+
+entity.nyx_storage.delete_form:
+  path: '/admin/nyx/storage/{nyx_storage}/delete'
+  defaults:
+    _entity_form: 'nyx_storage.delete'
+    _title: 'Delete File Storage'
+  requirements:
+    _permission: 'manage nyx storages'
+
+nyx_index_hub.admin:
+  path: '/admin/nyx'
+  defaults:
+    _controller: '\Drupal\system\Controller\SystemController::systemAdminMenuBlockPage'
+    _title: 'Nyx Index Hub'
+  requirements:
+    _permission: 'administer nyx index hub'
+
+nyx_index_hub.storage_upload:
+  path: '/admin/nyx/storage/{nyx_storage}/upload'
+  defaults:
+    _form: '\Drupal\nyx_index_hub\Form\DocumentoUploadForm'
+    _title: 'Upload Document'
+  requirements:
+    _permission: 'manage nyx storages'
+  options:
+    parameters:
+      nyx_storage:
+        type: 'entity:nyx_storage'
+
+nyx_index_hub.store_info:
+  path: '/nyx/api/store-info'
+  defaults:
+    _controller: '\Drupal\nyx_index_hub\Controller\StoreInfoController::getStoreInfo'
+  requirements:
+    _permission: 'view nyx projects'
+  options:
+    no_cache: TRUE
+
+nyx_index_hub.orphan_list:
+  path: '/admin/nyx/orphan-stores'
+  defaults:
+    _form: '\Drupal\nyx_index_hub\Form\OrphanStoresForm'
+    _title: 'Orphan Stores'
+  requirements:
+    _permission: 'administer nyx index hub'
+
+nyx_index_hub.chat_generate:
+  path: '/api/nyx/chat/generate'
+  defaults:
+    _controller: '\Drupal\nyx_index_hub\Controller\ChatController::generate'
+  requirements:
+    _user_is_logged_in: 'TRUE'
+  methods: [POST]
+  options:
+    _auth: ['basic_auth']
+    no_cache: TRUE
+
+# API de Sincronização (NyxContentSync)
+nyx_index_hub.sync_validate_store:
+  path: '/api/nyx-sync/validate-store'
+  defaults:
+    _controller: '\Drupal\nyx_index_hub\Controller\SyncApiController::validateStore'
+  requirements:
+    _access: 'TRUE'
+  methods: [POST]
+  options:
+    no_cache: TRUE
+
+nyx_index_hub.sync_upload:
+  path: '/api/nyx-sync/upload'
+  defaults:
+    _controller: '\Drupal\nyx_index_hub\Controller\SyncApiController::uploadContent'
+  requirements:
+    _access: 'TRUE'
+  methods: [POST]
+  options:
+    no_cache: TRUE
+
+nyx_index_hub.sync_delete:
+  path: '/api/nyx-sync/delete'
+  defaults:
+    _controller: '\Drupal\nyx_index_hub\Controller\SyncApiController::deleteContent'
+  requirements:
+    _access: 'TRUE'
+  methods: [POST]
+  options:
+    no_cache: TRUE

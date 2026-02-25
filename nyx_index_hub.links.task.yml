@@ -1,0 +1,43 @@
+entity.nyx_group.canonical:
+  route_name: entity.nyx_group.canonical
+  base_route: entity.nyx_group.canonical
+  title: 'View'
+
+entity.nyx_group.edit_form:
+  route_name: entity.nyx_group.edit_form
+  base_route: entity.nyx_group.canonical
+  title: 'Edit'
+
+entity.nyx_group.delete_form:
+  route_name: entity.nyx_group.delete_form
+  base_route: entity.nyx_group.canonical
+  title: 'Delete'
+  weight: 10
+
+entity.nyx_group.storages:
+  route_name: entity.nyx_group.storages
+  base_route: entity.nyx_group.canonical
+  title: 'File Storages'
+  weight: 5
+
+entity.nyx_storage.canonical:
+  route_name: entity.nyx_storage.canonical
+  base_route: entity.nyx_storage.canonical
+  title: 'View'
+
+entity.nyx_storage.edit_form:
+  route_name: entity.nyx_storage.edit_form
+  base_route: entity.nyx_storage.canonical
+  title: 'Edit'
+
+nyx_index_hub.storage_upload:
+  route_name: nyx_index_hub.storage_upload
+  base_route: entity.nyx_storage.canonical
+  title: 'Upload Document'
+  weight: 5
+
+entity.nyx_storage.delete_form:
+  route_name: entity.nyx_storage.delete_form
+  base_route: entity.nyx_storage.canonical
+  title: 'Delete'
+  weight: 10
