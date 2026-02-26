@@ -140,9 +140,10 @@ nyx_index_hub.sync_validate_store:
   defaults:
     _controller: '\Drupal\nyx_index_hub\Controller\SyncApiController::validateStore'
   requirements:
-    _access: 'TRUE'
+    _user_is_logged_in: 'TRUE'
   methods: [POST]
   options:
+    _auth: ['basic_auth']
     no_cache: TRUE
 
 nyx_index_hub.sync_upload:
@@ -150,9 +151,10 @@ nyx_index_hub.sync_upload:
   defaults:
     _controller: '\Drupal\nyx_index_hub\Controller\SyncApiController::uploadContent'
   requirements:
-    _access: 'TRUE'
+    _user_is_logged_in: 'TRUE'
   methods: [POST]
   options:
+    _auth: ['basic_auth']
     no_cache: TRUE
 
 nyx_index_hub.sync_delete:
@@ -160,7 +162,8 @@ nyx_index_hub.sync_delete:
   defaults:
     _controller: '\Drupal\nyx_index_hub\Controller\SyncApiController::deleteContent'
   requirements:
-    _access: 'TRUE'
+    _user_is_logged_in: 'TRUE'
   methods: [POST]
   options:
+    _auth: ['basic_auth']
     no_cache: TRUE
