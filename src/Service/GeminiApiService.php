@@ -189,18 +189,31 @@ class GeminiApiService {
    *   Tipo MIME do arquivo.
    * @param string $store_name
    *   Nome do store (ex: fileSearchStores/xxx).
+   * @param string|null $display_name
+   *   Nome de exibição do arquivo (opcional).
    *
    * @return array|null
    *   Resposta da API ou NULL em caso de erro.
    */
-  public function uploadFile($file_path, $mime_type, $store_name) {
+  public function uploadFile($file_path, $mime_type, $store_name, $display_name = NULL) {
     try {
+      // Se não foi fornecido display_name, usa o nome do arquivo
+      if (empty($display_name)) {
+        $display_name = basename($file_path);
+      }
+
       $response = $this->httpClient->request('POST', $this->getBaseUrl() . '/upload/v1beta/' . $store_name . ':uploadToFileSearchStore', [
         'headers' => [
           'X-Goog-Upload-Header-Content-Type' => $mime_type,
           'x-goog-api-key' => $this->getApiKey(),
         ],
-        'multipart' => [['name' => 'file', 'contents' => fopen($file_path, 'r')]],
+        'multipart' => [
+          [
+            'name' => 'file',
+            'contents' => fopen($file_path, 'r'),
+            'filename' => $display_name,
+          ],
+        ],
       ]);
 
       $result = json_decode($response->getBody()->getContents(), TRUE);

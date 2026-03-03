@@ -14,6 +14,11 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class StoreInfoController extends ControllerBase {
 
   /**
+   * Date format for display.
+   */
+  const DATE_FORMAT = 'd/m/Y H:i';
+
+  /**
    * API service.
    *
    * @var \Drupal\nyx_index_hub\Service\GeminiApiService
@@ -57,27 +62,16 @@ class StoreInfoController extends ControllerBase {
 
       if ($documents_data && isset($documents_data['documents'])) {
         foreach ($documents_data['documents'] as $doc) {
-          $documents[] = [
-            'name' => $doc['name'] ?? '-',
-            'displayName' => $doc['displayName'] ?? '-',
-            'mimeType' => $doc['mimeType'] ?? '-',
-            'sizeBytes' => ByteSizeMarkup::create($doc['sizeBytes'] ?? 0),
-            'createTime' => !empty($doc['createTime']) ? date('d/m/Y H:i', strtotime($doc['createTime'])) : '-',
-            'updateTime' => !empty($doc['updateTime']) ? date('d/m/Y H:i', strtotime($doc['updateTime'])) : '-',
-          ];
+          $documents[] = $this->formatDocumentData($doc);
         }
       }
 
       return new JsonResponse([
         'success' => TRUE,
-        'data' => [
-          'displayName' => $data['displayName'] ?? '-',
-          'activeDocuments' => $data['activeDocumentsCount'] ?? '0',
-          'sizeBytes' => ByteSizeMarkup::create($data['sizeBytes'] ?? 0),
-          'createTime' => !empty($data['createTime']) ? date('d/m/Y H:i', strtotime($data['createTime'])) : '-',
-          'updateTime' => !empty($data['updateTime']) ? date('d/m/Y H:i', strtotime($data['updateTime'])) : '-',
-          'documents' => $documents,
-        ],
+        'data' => array_merge(
+          $this->formatStoreData($data),
+          ['documents' => $documents]
+        ),
       ]);
     }
 
@@ -116,6 +110,58 @@ class StoreInfoController extends ControllerBase {
       'success' => FALSE,
       'message' => $this->t('Unable to delete document.'),
     ], 500);
+  }
+
+  /**
+   * Format store data for response.
+   *
+   * @param array $data
+   *   Raw store data from API.
+   *
+   * @return array
+   *   Formatted store data.
+   */
+  private function formatStoreData(array $data): array {
+    return [
+      'displayName' => $data['displayName'] ?? '-',
+      'activeDocuments' => $data['activeDocumentsCount'] ?? '0',
+      'sizeBytes' => ByteSizeMarkup::create($data['sizeBytes'] ?? 0),
+      'createTime' => $this->formatDate($data['createTime'] ?? NULL),
+      'updateTime' => $this->formatDate($data['updateTime'] ?? NULL),
+    ];
+  }
+
+  /**
+   * Format document data for response.
+   *
+   * @param array $doc
+   *   Raw document data from API.
+   *
+   * @return array
+   *   Formatted document data.
+   */
+  private function formatDocumentData(array $doc): array {
+    return [
+      'name' => $doc['name'] ?? '-',
+      'displayName' => $doc['displayName'] ?? '-',
+      'mimeType' => $doc['mimeType'] ?? '-',
+      'sizeBytes' => ByteSizeMarkup::create($doc['sizeBytes'] ?? 0),
+      'createTime' => $this->formatDate($doc['createTime'] ?? NULL),
+      'updateTime' => $this->formatDate($doc['updateTime'] ?? NULL),
+    ];
+  }
+
+  /**
+   * Format date string.
+   *
+   * @param string|null $date
+   *   ISO date string or NULL.
+   *
+   * @return string
+   *   Formatted date or '-'.
+   */
+  private function formatDate(?string $date): string {
+    return !empty($date) ? date(self::DATE_FORMAT, strtotime($date)) : '-';
   }
 
 }

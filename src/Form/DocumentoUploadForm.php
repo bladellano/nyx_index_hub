@@ -106,7 +106,8 @@ class DocumentoUploadForm extends FormBase {
     }
 
     $file_path = \Drupal::service('file_system')->realpath($file->getFileUri());
-    $result = $this->apiService->uploadFile($file_path, $file->getMimeType(), $store_name);
+    $display_name = $file->getFilename();
+    $result = $this->apiService->uploadFile($file_path, $file->getMimeType(), $store_name, $display_name);
 
     if ($result) {
       $this->messenger()->addStatus($this->t('Document @filename was sent successfully to indexing!', [

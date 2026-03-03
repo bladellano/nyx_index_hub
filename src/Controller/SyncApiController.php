@@ -14,6 +14,16 @@ use Symfony\Component\HttpFoundation\Request;
 class SyncApiController extends ControllerBase {
 
   /**
+   * Prefixo para chaves do State API.
+   */
+  const STATE_PREFIX = 'nyx_sync.file_mapping.';
+
+  /**
+   * Prefixo temporário para arquivos.
+   */
+  const TEMP_FILE_PREFIX = 'nyx_';
+
+  /**
    * Gemini API service.
    *
    * @var \Drupal\nyx_index_hub\Service\GeminiApiService
@@ -127,8 +137,13 @@ class SyncApiController extends ControllerBase {
         \Drupal::logger('nyx_index_hub')->info('Arquivo antigo deletado: @file', ['@file' => $existing_file]);
       }
 
+      // Gera nome do arquivo: tipo_AAAA-MM-DD_HH-II-SS.md
+      $store_type = explode('-', basename($store_name))[0] ?? 'content';
+      $timestamp = date('Y-m-d_H-i-s');
+      $display_name = $store_type . '_' . $timestamp . '.md';
+
       // Upload novo arquivo
-      $result = $this->uploadMarkdownFile($markdown, $store_name);
+      $result = $this->uploadMarkdownFile($markdown, $store_name, $display_name);
 
       if ($result && isset($result['response']['documentName'])) {
         $file_name = $result['response']['documentName'];
@@ -256,18 +271,20 @@ class SyncApiController extends ControllerBase {
    *   Conteúdo markdown.
    * @param string $store_name
    *   Nome do store.
+   * @param string|null $display_name
+   *   Nome de exibição do arquivo (opcional).
    *
    * @return array|null
    *   Resultado do upload ou NULL.
    */
-  private function uploadMarkdownFile(string $markdown, string $store_name): ?array {
-    $temp_file = tempnam(sys_get_temp_dir(), 'nyx_');
+  private function uploadMarkdownFile(string $markdown, string $store_name, ?string $display_name = NULL): ?array {
+    $temp_file = tempnam(sys_get_temp_dir(), self::TEMP_FILE_PREFIX);
     if (!$temp_file || file_put_contents($temp_file, $markdown) === FALSE) {
       return NULL;
     }
 
     try {
-      return $this->apiService->uploadFile($temp_file, 'text/markdown', $store_name);
+      return $this->apiService->uploadFile($temp_file, 'text/markdown', $store_name, $display_name);
     }
     finally {
       if (file_exists($temp_file)) {
@@ -288,7 +305,7 @@ class SyncApiController extends ControllerBase {
    *   Chave do state.
    */
   private function getStateKey(string $store_name, string $content_id): string {
-    return 'nyx_sync.file_mapping.' . md5($store_name . ':' . $content_id);
+    return self::STATE_PREFIX . md5($store_name . ':' . $content_id);
   }
 
   /**
