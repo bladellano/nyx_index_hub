@@ -334,21 +334,53 @@ class GeminiApiService {
    *   Nome do store (ex: fileSearchStores/xxx).
    *
    * @return array|null
-   *   Lista de documentos ou NULL em caso de erro.
+   *   Lista completa de documentos (todas as páginas) ou NULL em caso de erro.
    */
   public function listStoreDocuments($store_name) {
     $url = $this->getBaseUrl() . '/v1beta/' . $store_name . '/documents';
     $api_key = $this->getApiKey();
+    $all_documents = [];
+    $page_token = NULL;
 
     try {
-      $response = $this->httpClient->request('GET', $url, [
-        'query' => [
-          'key' => $api_key,
-        ],
+      // Loop através de todas as páginas
+      do {
+        $query = [];
+
+        if ($page_token) {
+          $query['pageToken'] = $page_token;
+        }
+
+        $response = $this->httpClient->request('GET', $url, [
+          'headers' => [
+            'x-goog-api-key' => $api_key,
+          ],
+          'query' => $query,
+        ]);
+
+        $data = json_decode($response->getBody()->getContents(), TRUE);
+
+        // Adiciona documentos da página atual
+        if (isset($data['documents']) && is_array($data['documents'])) {
+          $all_documents = array_merge($all_documents, $data['documents']);
+        }
+
+        // Verifica se há próxima página
+        $page_token = $data['nextPageToken'] ?? NULL;
+
+        // Log para debug
+        if ($page_token) {
+          $this->logger->info('Fetching next page of documents for @store', ['@store' => $store_name]);
+        }
+
+      } while ($page_token);
+
+      $this->logger->info('Listed @count documents from @store', [
+        '@count' => count($all_documents),
+        '@store' => $store_name,
       ]);
 
-      $data = json_decode($response->getBody()->getContents(), TRUE);
-      return $data;
+      return ['documents' => $all_documents];
     }
     catch (RequestException $e) {
       $this->logger->error('Error listing store documents: @message', ['@message' => $e->getMessage()]);
