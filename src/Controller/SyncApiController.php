@@ -137,10 +137,8 @@ class SyncApiController extends ControllerBase {
         \Drupal::logger('nyx_index_hub')->info('Arquivo antigo deletado: @file', ['@file' => $existing_file]);
       }
 
-      // Gera nome do arquivo: tipo_AAAA-MM-DD_HH-II-SS.md
-      $store_type = explode('-', basename($store_name))[0] ?? 'content';
-      $timestamp = date('Y-m-d_H-i-s');
-      $display_name = $store_type . '_' . $timestamp . '.md';
+      // Usa content_id como display_name do arquivo
+      $display_name = $content_id . '.md';
 
       // Upload novo arquivo
       $result = $this->uploadMarkdownFile($markdown, $store_name, $display_name);
