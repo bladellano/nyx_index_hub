@@ -4,3 +4,13 @@ store_info:
     js/store_info.js: {}
   dependencies:
     - core/drupal
+
+group_key_generator:
+  version: 1.0
+  js:
+    js/group_key_generator.js: {}
+  css:
+    theme:
+      css/group_key_generator.css: {}
+  dependencies:
+    - core/drupal

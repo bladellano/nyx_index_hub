@@ -1,0 +1,53 @@
+/**
+ * @file
+ * Styles for Group Key Generator.
+ */
+
+.group-key-wrapper {
+  position: relative;
+  margin-bottom: 1em;
+}
+
+.generate-group-key-btn {
+  margin-top: 0.5em;
+  margin-left: 0;
+  background-color: #0073aa;
+  color: #fff;
+  border: 1px solid #0073aa;
+  padding: 0.4em 1em;
+  cursor: pointer;
+  border-radius: 2px;
+  font-size: 0.9em;
+  transition: background-color 0.2s ease;
+}
+
+.generate-group-key-btn:hover,
+.generate-group-key-btn:focus {
+  background-color: #005a87;
+  border-color: #005a87;
+  color: #fff;
+}
+
+.generate-group-key-btn:active {
+  background-color: #004468;
+  border-color: #004468;
+}
+
+.group-key-input {
+  font-family: monospace;
+  font-size: 0.95em;
+}
+
+.group-key-updated {
+  animation: highlightField 1s ease;
+}
+
+@keyframes highlightField {
+  0%, 100% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: #d4edda;
+    border-color: #28a745;
+  }
+}
