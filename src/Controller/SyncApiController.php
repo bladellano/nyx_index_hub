@@ -4,6 +4,7 @@ namespace Drupal\nyx_index_hub\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\nyx_index_hub\Service\GeminiApiService;
+use Drupal\nyx_index_hub\Service\MarkdownGeneratorService;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -31,10 +32,21 @@ class SyncApiController extends ControllerBase {
   protected $apiService;
 
   /**
+   * Markdown generator service.
+   *
+   * @var \Drupal\nyx_index_hub\Service\MarkdownGeneratorService
+   */
+  protected $markdownGenerator;
+
+  /**
    * Construtor.
    */
-  public function __construct(GeminiApiService $api_service) {
+  public function __construct(
+    GeminiApiService $api_service,
+    MarkdownGeneratorService $markdown_generator
+  ) {
     $this->apiService = $api_service;
+    $this->markdownGenerator = $markdown_generator;
   }
 
   /**
@@ -42,7 +54,8 @@ class SyncApiController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('nyx_index_hub.api_service')
+      $container->get('nyx_index_hub.api_service'),
+      $container->get('nyx_index_hub.markdown_generator')
     );
   }
 
@@ -114,11 +127,30 @@ class SyncApiController extends ControllerBase {
     $group_key = $data['group_key'] ?? '';
     $store_name = $data['store_name'] ?? '';
     $content_id = $data['content_id'] ?? '';
+
+    // Suporta tanto markdown direto quanto nodes para gerar markdown
     $markdown = $data['markdown'] ?? '';
+    $nodes = $data['nodes'] ?? [];
 
     // Validações básicas
-    if (empty($group_key) || empty($store_name) || empty($content_id) || empty($markdown)) {
+    if (empty($group_key) || empty($store_name) || empty($content_id)) {
       return $this->errorResponse('Dados obrigatórios ausentes', 400);
+    }
+
+    // Se recebeu nodes, gera markdown no servidor
+    if (empty($markdown) && !empty($nodes)) {
+      if (count($nodes) === 1) {
+        $markdown = $this->markdownGenerator->generateFromNode($nodes[0]);
+      }
+      else {
+        $content_type_label = $nodes[0]['bundle_label'] ?? NULL;
+        $markdown = $this->markdownGenerator->generateFromMultipleNodes($nodes, $content_type_label);
+      }
+    }
+
+    // Valida se tem markdown para enviar
+    if (empty($markdown)) {
+      return $this->errorResponse('Markdown ou nodes são obrigatórios', 400);
     }
 
     // Valida store

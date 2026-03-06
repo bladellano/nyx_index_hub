@@ -2,3 +2,7 @@ services:
   nyx_index_hub.api_service:
     class: Drupal\nyx_index_hub\Service\GeminiApiService
     arguments: ['@http_client', '@config.factory', '@logger.factory']
+
+  nyx_index_hub.markdown_generator:
+    class: Drupal\nyx_index_hub\Service\MarkdownGeneratorService
+    arguments: ['@logger.factory']
